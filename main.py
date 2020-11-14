@@ -141,9 +141,9 @@ def getFramesFromGIF(url):
 
 # gifFrames = [getFrameFromUrl('Mobs/' + str(i + 1) + '.png') for i in range(4)]
 
-gifFrames = getFramesFromGIF('./memes/gotagag.gif')
+gifFrames = getFramesFromGIF('./memes/load.gif')
 print(gifFrames)
 
 # getBundleGif(gifFrames, 3, 'container.2', 'pepe2')
 
-getMCFunction(gifFrames, 1, 'container.0', 'gotagag')
+getMCFunction(gifFrames, 1, 'container.2', 'load')
