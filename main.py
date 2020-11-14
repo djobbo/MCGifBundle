@@ -1,23 +1,45 @@
+from pathlib import Path
 from PIL import Image, ImageSequence
 from math import sqrt
 
 COLORS = [
     ('white', (249, 255, 255)),
+    ('light_gray', (156, 157, 151)),
+    ('gray', (71, 79, 82)),
+    ('black', (29, 28, 33)),
+
+    ('brown',(130, 84, 50)),
+    ('red', (176, 46, 38)),
     ('orange', (249, 128, 29)),
-    ('magenta', (198, 79, 189)),
-    ('light_blue',(58, 179, 218)),
     ('yellow',(255, 216, 61)),
     ('lime',(128, 199, 31)),
-    ('pink', (243, 140, 170)),
-    ('gray', (71, 79, 82)),
-    ('light_gray', (156, 157, 151)),
-    ('cyan', (22, 156, 157)),
-    ('purple', (137, 50, 183)),
-    ('blue', (60, 68, 169)),
-    ('brown',(130, 84, 50)),
     ('green',(93, 124, 21)),
-    ('red', (176, 46, 38)),
-    ('black', (29, 28, 33))
+    ('cyan', (22, 156, 157)),
+    ('light_blue',(58, 179, 218)),
+    ('blue', (60, 68, 169)),
+    ('purple', (137, 50, 183)),
+    ('magenta', (198, 79, 189)),
+    ('pink', (243, 140, 170)),
+]
+
+PURE_COLORS = [
+    ('white', (255, 255, 255)),
+    ('light_gray', (170, 170, 170)),
+    ('gray', (80, 80, 80)),
+    ('black', (0, 0, 0)),
+
+    ('brown',(170, 80, 40)),
+    ('red', (170, 40, 40)),
+    ('orange', (255, 128, 0)),
+    ('yellow',(255, 255, 0)),
+    ('lime',(128, 255, 0)),
+    ('green',(80, 128, 0)),
+    ('cyan', (0, 170, 170)),
+    ('light_blue',(0, 170, 255)),
+    ('blue', (40, 40, 170)),
+    ('purple', (128, 40, 170)),
+    ('magenta', (200, 80, 200)),
+    ('pink', (255, 128, 170)),
 ]
 
 MAX_COMMAND_LENGTH = 30000
@@ -31,7 +53,7 @@ def getNearestColor(rgb):
         color_diffs.append((color_diff, mcName))
     return min(color_diffs)[1]
     
-def getBundleData(frame, commandBlock = False):
+def getBundleData(frame, commandBlock = False, uniqueId = 'test123'):
     
 
     command = 'bundle{Items:['
@@ -44,7 +66,7 @@ def getBundleData(frame, commandBlock = False):
             else:
                 command += '{id:"minecraft:' + mcName + '_stained_glass_pane",Count:1b},'
 
-    command += ']}'
+    command += '], gifbundle:"' + uniqueId + '"}'
     return command
 
 def getBundleGif(frames, delay = 5, slot = 'container.8', uniqueId = 'time123'):
@@ -99,17 +121,31 @@ def writeOutputFile(data, uniqueId, index = 0):
     f.write(data)
     f.close()
 
-def getMCFunction(frames, delay = 5, slot = 'container.8', uniqueId = 'test123'):
-    output = 'scoreboard objectives add '+ uniqueId + ' dummy\n'
-    output += 'scoreboard players add @e[scores={' + uniqueId + '=1..}] ' + uniqueId + ' 1\n'
+def getMCFunction(frames, delay = 5, uniqueId = 'test123'):
+    
+    Path('dist/' + uniqueId).mkdir(exist_ok=True)
+
+    initOutput = 'scoreboard objectives add '+ uniqueId + ' dummy\n'
+    initOutput += 'give @a minecraft:bundle{gifbundle:"' + uniqueId + '"}'
+
+    f = open('dist/' + uniqueId + '/init.mcfunction', 'w')
+    f.write(initOutput)
+    f.close()
+
+    output = 'scoreboard players add @a[scores={' + uniqueId + '=1..}] ' + uniqueId + ' 1\n'
+    output += 'scoreboard players set @a[scores={' + uniqueId + '=..1}, nbt={Inventory:[{id:"minecraft:bundle", tag:{gifbundle:"' + uniqueId + '"}}]}] ' + uniqueId + ' 1\n'
+    output += 'scoreboard players set @a[scores={' + uniqueId + '=1..}, nbt=!{Inventory:[{id:"minecraft:bundle", tag:{gifbundle:"' + uniqueId + '"}}]}] ' + uniqueId + ' 0\n'
 
     for i in range(len(frames)):
         frame = frames[i]
-        output += 'item entity @p[scores={' + uniqueId + '=' + str((i + 1) * delay + 1) + '}] ' + slot + ' replace ' + getBundleData(frame) + '\n'
+        for slot in range(9):
+            output += 'item entity @a[scores={' + uniqueId + '=' + str((i + 1) * delay + 1) + '},'
+            output += 'nbt={Inventory:[{id:"minecraft:bundle", tag:{gifbundle:"' + uniqueId + '"},'
+            output += 'Count: 1b, Slot: ' + str(slot) + 'b}]}] container.' + str(slot) + ' replace ' + getBundleData(frame, False, uniqueId) + '\n'
     
-    output += 'scoreboard players set @e[scores={' + uniqueId + '=' + str((len(frames) * delay + 1)) + '..}] ' + uniqueId + ' 1'
+    output += 'scoreboard players set @a[scores={' + uniqueId + '=' + str((len(frames) * delay + 1)) + '..}] ' + uniqueId + ' 1'
 
-    f = open('dist/' + uniqueId + '.mcfunction', 'w')
+    f = open('dist/' + uniqueId + '/main.mcfunction', 'w')
     f.write(output)
     f.close()
 
@@ -141,9 +177,11 @@ def getFramesFromGIF(url):
 
 # gifFrames = [getFrameFromUrl('Mobs/' + str(i + 1) + '.png') for i in range(4)]
 
-gifFrames = getFramesFromGIF('./memes/load.gif')
+gifFrames = getFramesFromGIF('./gifs/pepe.gif')
 print(gifFrames)
 
 # getBundleGif(gifFrames, 3, 'container.2', 'pepe2')
 
-getMCFunction(gifFrames, 1, 'container.2', 'load')
+Path('dist').mkdir(exist_ok=True)
+
+getMCFunction(gifFrames, 1, 'pepe')
