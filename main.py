@@ -34,15 +34,15 @@ def getNearestColor(rgb):
     
 
 def getBundleData(frame, uniqueId = 'test123'):
-    command = 'bundle{Items:['
+    output = '\\"Items\\":['
 
     for y in range(frame.size[1]):
         for x in range(frame.size[0]):
             mcName = getNearestColor(frame.getpixel((x, y)))
-            command += '{id:"minecraft:' + mcName + '_stained_glass_pane",Count:1b},'
+            output += '{id:\\"minecraft:' + mcName + '_stained_glass_pane\\",Count:1b},'
 
-    command += '], gifbundle:"' + uniqueId + '"}'
-    return command
+    output += '], gifbundle:\\"' + uniqueId + '\\"'
+    return output
 
 
 def writeOutputFile(url, data):
@@ -62,6 +62,7 @@ def getMCFunction(frames, delay = 5, uniqueId = 'test123'):
     Path(outputFolder).mkdir(exist_ok=True)
     Path(outputFolder + '/gifbundle').mkdir(exist_ok=True)
     Path(outputFolder + '/gifbundle/functions').mkdir(exist_ok=True)
+    Path(outputFolder + '/gifbundle/item_modifiers').mkdir(exist_ok=True)
     Path(outputFolder + '/minecraft').mkdir(exist_ok=True)
     Path(outputFolder + '/minecraft/tags').mkdir(exist_ok=True)
     Path(outputFolder + '/minecraft/tags/functions').mkdir(exist_ok=True)
@@ -80,10 +81,17 @@ def getMCFunction(frames, delay = 5, uniqueId = 'test123'):
 
     for i in range(len(frames)):
         frame = frames[i]
+
+        itemModifierOutput = '{"function": "set_nbt","tag": "{'
+        itemModifierOutput += getBundleData(frame, uniqueId)
+        itemModifierOutput += '}"}'
+
+        writeOutputFile(outputFolder + '/gifbundle/item_modifiers/frame_' + str(i) + '.json', itemModifierOutput)
+
         for slot in range(9):
             output += 'item entity @a[scores={' + uniqueId + '=' + str((i + 1) * delay + 1) + '},'
             output += 'nbt={Inventory:[{id:"minecraft:bundle", tag:{gifbundle:"' + uniqueId + '"},'
-            output += 'Count: 1b, Slot: ' + str(slot) + 'b}]}] container.' + str(slot) + ' replace ' + getBundleData(frame, uniqueId) + '\n'
+            output += 'Count: 1b, Slot: ' + str(slot) + 'b}]}] container.' + str(slot) + ' modify gifbundle:frame_' + str(i) + '\n'
     
     output += 'scoreboard players set @a[scores={' + uniqueId + '=' + str((len(frames) * delay + 1)) + '..}] ' + uniqueId + ' 1'
 
