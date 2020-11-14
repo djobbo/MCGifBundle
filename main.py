@@ -53,11 +53,11 @@ def writeOutputFile(url, data):
 
 def getMCFunction(frames, delay = 5, uniqueId = 'test123'):
 
-    Path('dist/gifbundle').mkdir(exist_ok=True)
+    Path('dist/gifbundle_' + uniqueId).mkdir(exist_ok=True)
 
-    writeOutputFile('dist/gifbundle/pack.mcmeta', '{"pack": {"pack_format": 6,"description": "GIF Bundles!"}}')
+    writeOutputFile('dist/gifbundle_' + uniqueId + '/pack.mcmeta', '{"pack": {"pack_format": 6,"description": "GIF Bundles!"}}')
 
-    outputFolder = 'dist/gifbundle/data'
+    outputFolder = 'dist/gifbundle_' + uniqueId + '/data'
 
     Path(outputFolder).mkdir(exist_ok=True)
     Path(outputFolder + '/gifbundle').mkdir(exist_ok=True)
@@ -121,7 +121,7 @@ def getFramesFromGIF(url):
         return frames
 
 
-gifFrames = getFramesFromGIF('./gifs/pepe.gif')
+gifFrames = getFramesFromGIF('./gifs/bh.gif')
 
 try:
     shutil.rmtree('dist')
@@ -130,4 +130,4 @@ except:
 
 Path('dist').mkdir(exist_ok=True)
 
-getMCFunction(gifFrames, 1, 'pepe')
+getMCFunction(gifFrames, 1, 'bh')
