@@ -65,7 +65,6 @@ def getMCFunction(frames, delay = 5, uniqueId = 'test123'):
 
         writeOutputFile(outputFolder + '/gifbundle/item_modifiers/frame_' + str(i) + '.json', itemModifierOutput)
         totalFileSize += Path(outputFolder + '/gifbundle/item_modifiers/frame_' + str(i) + '.json').stat().st_size
-        # print('Created \'' + outputFolder + '/gifbundle/item_modifiers/frame_' + str(i) + '.json\' [' + str(filesize/1000) + 'kB]')
 
         for slot in range(9):
             output += 'item entity @a[scores={' + uniqueId + '=' + str((i + 1) * delay + 1) + '},'
