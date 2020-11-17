@@ -1,4 +1,5 @@
 import sys
+import time
 from pathlib import Path
 from getFramesFromGIF import getFramesFromGIF
 from getMCFunction import getMCFunction
@@ -13,5 +14,11 @@ clearOutDir()
 filename = sys.argv[1]
 uniqueId = sys.argv[2]
 
+start = time.time()
+
 gifFrames = getFramesFromGIF(filename)
 getMCFunction(gifFrames, 1, uniqueId)
+
+end = time.time()
+
+print('Generated datapack in', '%.2f' % (end - start) + 's')

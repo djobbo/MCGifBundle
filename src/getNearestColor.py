@@ -1,4 +1,6 @@
 from math import sqrt
+import json
+
 
 COLORS = [
     ('white', (249, 255, 255)),
@@ -19,16 +21,17 @@ COLORS = [
     ('pink', (243, 140, 170)),
 ]
 
-def getNearestColor(rgb):
-    r, g, b = rgb
+def getNearestColor(r, g, b):
+    with open('./src/item_colors.json') as json_file:
+        colors = json.load(json_file)
 
-    color_diffs = []
-    for (mcName, color) in COLORS:
-        cr, cg, cb = color
-        _r = (cr + r) / 2
+        color_diffs = []
+        for (mcName, color) in colors:
+            cr, cg, cb, a = color
+            _r = (cr + r) / 2
 
-        dr, dg, db = r - cr, g - cg, b - cb
+            dr, dg, db = r - cr, g - cg, b - cb
 
-        color_diff = sqrt((2 + _r / 256)*dr**2 + 4*dg**2 + (2 + (255 - _r) / 256)*db**2)
-        color_diffs.append((color_diff, mcName))
-    return min(color_diffs)[1]
+            color_diff = sqrt((2 + _r / 256)*dr**2 + 4*dg**2 + (2 + (255 - _r) / 256)*db**2)
+            color_diffs.append((color_diff, mcName))
+        return min(color_diffs)[1]

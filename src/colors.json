@@ -1,0 +1,18 @@
+[
+	["white_stained_glass_pane", [249, 255, 255, 255]],
+	["light_gray_stained_glass_pane", [156, 157, 151, 255]],
+	["gray_stained_glass_pane", [71, 79, 82, 255]],
+	["black_stained_glass_pane", [29, 28, 33, 255]],
+	["brown_stained_glass_pane", [130, 84, 50, 255]],
+	["red_stained_glass_pane", [176, 46, 38, 255]],
+	["orange_stained_glass_pane", [249, 128, 29, 255]],
+	["yellow_stained_glass_pane", [255, 216, 61, 255]],
+	["lime_stained_glass_pane", [128, 199, 31, 255]],
+	["green_stained_glass_pane", [93, 124, 21, 255]],
+	["cyan_stained_glass_pane", [22, 156, 157, 255]],
+	["light_blue_stained_glass_pane", [58, 179, 218, 255]],
+	["blue_stained_glass_pane", [60, 68, 169, 255]],
+	["purple_stained_glass_pane", [137, 50, 183, 255]],
+	["magenta_stained_glass_pane", [198, 79, 189, 255]],
+	["pink_stained_glass_pane", [243, 140, 170, 255]]
+]
