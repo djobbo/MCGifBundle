@@ -4,21 +4,39 @@ from pathlib import Path
 from getFramesFromGIF import getFramesFromGIF
 from getMCFunction import getMCFunction
 from clearOutDir import clearOutDir
+from flask import Flask
 
-if len(sys.argv) < 3:
-    print('Missing argument. Correct usage: make [gifPath] [uniqueID]')
-    sys.exit(1)
+app = Flask(__name__)
 
-clearOutDir()
+@app.route('/')
+def home():
+    return 'Lesgoooo'
 
-filename = sys.argv[1]
-uniqueId = sys.argv[2]
+@app.route('/gif', methods=["POST"])
+def handleGif():
+    return 'GIF'
 
-start = time.time()
+@app.errorhandler(404)
+def page_not_found(error):
+    return "Page not found"
 
-gifFrames = getFramesFromGIF(filename)
-getMCFunction(gifFrames, 1, uniqueId)
+# if len(sys.argv) < 3:
+#     print('Missing argument. Correct usage: make [gifPath] [uniqueID]')
+#     sys.exit(1)
 
-end = time.time()
+# clearOutDir()
 
-print('Generated datapack in', '%.2f' % (end - start) + 's')
+# filename = sys.argv[1]
+# uniqueId = sys.argv[2]
+
+# start = time.time()
+
+# gifFrames = getFramesFromGIF(filename)
+# getMCFunction(gifFrames, 1, uniqueId)
+
+# end = time.time()
+
+# print('Generated datapack in', '%.2f' % (end - start) + 's')
+
+if __name__ == '__main__':
+    app.run(debug=True, host='0.0.0.0', port=5000)

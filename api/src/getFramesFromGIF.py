@@ -1,14 +1,22 @@
 import sys
 from pathlib import Path
 from PIL import Image, ImageSequence
+import urllib.request as urllib
+import io
 
 def getFramesFromGIF(filename):
 
     print('Loading \'' + filename + '\'...')
 
     try:
-        im = Image.open(filename)
-    except IOError:
+        print('yikes')
+        fd = urllib.urlopen(filename)
+        print(fd)
+        image_file = io.BytesIO(fd.read())
+        print(image_file)
+        im = Image.open(image_file)
+    except Exception as e:
+        print(e)
         print ("Cant load", filename)
         sys.exit(1)
 
